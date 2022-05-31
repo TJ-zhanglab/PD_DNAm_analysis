@@ -155,3 +155,84 @@ brain <- LoadData("stxBrain", type = "posterior1")
 brain <- SCTransform(brain, assay = "Spatial", verbose = FALSE)
 SpatialFeaturePlot(brain, features = c("Cbx7", "Scgn","Lag3","Edaradd","Nhlrc1"))
 ############################figS6############################
+library(openxlsx)
+table <- read.csv("./LRRK2_Methylation_DAT_Full_clinical.csv")
+colnames(table)[3] <- "Diagnosis"
+
+# 1.for Right putamen at baseline
+
+a <- filter(table,Diagnosis == "1")
+a <- filter(a,AA1 != "#VALUE!")
+a <- filter(a,Right_putamen_at_baseline != 'NA')
+a$Right_putamen_at_baseline<-as.numeric(a$Right_putamen_at_baseline)
+a$AA1<-as.numeric(a$AA1)
+a$Disease_duration<-as.numeric(a$Disease_duration)
+put_r <- lm(Right_putamen_at_baseline ~ AA1 + GENDER + family_info + Disease_duration, data = a)
+
+summary(put_r)
+
+plot<- ggplot(data=a,aes(x=AA1,y= Right_putamen_at_baseline))+geom_point() + 
+  geom_abline(intercept = coef(put_r)[1],slope = coef(put_r)[2],color="blue",size=1) + 
+  scale_y_continuous(name = "DatScan striatal binding ratio of Right putamen",limits=c(0,2.5)) + 
+  theme_bw() + theme(panel.grid = element_blank(),panel.border = element_blank(),axis.line=element_line(size = 1,colour = 'black'))
+
+plot
+
+# 2.for left putamen at baseline 
+
+b <- filter(table,Diagnosis == "1")
+b <- filter(b,AA1 != "#VALUE!")
+b <- filter(b,b$Left_putamen_at_baseline != "NA")
+b$Left_putamen_at_baseline <- as.numeric(b$Left_putamen_at_baseline)
+b$AA1<-as.numeric(b$AA1)
+b$Disease_duration<-as.numeric(b$Disease_duration)
+put_l <- lm(Left_putamen_at_baseline ~  AA1+ GENDER + family_info + Disease_duration, data = b)
+
+summary(put_l)
+
+plot<- ggplot(data=b,aes(x=AA1,y= Left_putamen_at_baseline))+geom_point() + 
+  geom_abline(intercept = coef(put_l)[1],slope = coef(put_l)[2],color="blue",size=1) + 
+  scale_y_continuous(name = "DatScan striatal binding ratio of Left putamen",limits=c(0,2.5)) + 
+  theme_bw() + theme(panel.grid = element_blank(),panel.border = element_blank(),axis.line=element_line(size = 1,colour = 'black'))
+
+plot
+
+# 3.for Right caudate at baseline 
+
+c <- filter(table,Diagnosis == "1")
+c <- filter(c,AA1 != "#VALUE!")
+c <- filter(c,Right_caudate_at_baseline != "NA")
+c$Right_caudate_at_baseline <- as.numeric(c$Right_caudate_at_baseline)
+c$AA1<-as.numeric(c$AA1)
+c$Disease_duration<-as.numeric(c$Disease_duration)
+cau_r <- lm(Right_caudate_at_baseline ~ AA1 + GENDER + family_info + Disease_duration, data = c)
+
+summary(cau_r)
+
+plot<- ggplot(data=c,aes(x=AA1,y= Right_caudate_at_baseline))+geom_point() + 
+  geom_abline(intercept = coef(cau_r)[1],slope = coef(cau_r)[2],color="blue",size=1) + 
+  scale_y_continuous(name = "DatScan striatal binding ratio of Right caudate",limits=c(0,4)) + 
+  theme_bw() + theme(panel.grid = element_blank(),panel.border = element_blank(),axis.line=element_line(size = 1,colour = 'black'))
+
+plot
+
+# 4.for Left caudate at baseline 
+
+d <- filter(table,Diagnosis == "1")
+d <- filter(d,AA1 != "#VALUE!")
+d <- filter(d,Left_caudate_at_baseline != "NA")
+d$Left_caudate_at_baseline <- as.numeric(d$Left_caudate_at_baseline)
+d$AA1<-as.numeric(d$AA1)
+d$Disease_duration<-as.numeric(d$Disease_duration)
+cau_l <- lm(Left_caudate_at_baseline ~ AA1 + GENDER + family_info + Disease_duration, data = d)
+
+summary(cau_l)
+
+plot<- ggplot(data=d,aes(x=AA1,y= Left_caudate_at_baseline))+geom_point() + 
+  geom_abline(intercept = coef(cau_l)[1],slope = coef(cau_l)[2],color="blue",size=1) + 
+  scale_y_continuous(name = "DatScan striatal binding ratio of Left caudate",limits=c(0,4)) + 
+  theme_bw() + theme(panel.grid = element_blank(),panel.border = element_blank(),axis.line=element_line(size = 1,colour = 'black'))
+
+plot
+
+
